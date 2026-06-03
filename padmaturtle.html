@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padma Turtle Capital Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #060609;
+            --deep: #0c0d12;
+            --surface: #111318;
+            --panel: #16181f;
+            --border: rgba(255,255,255,0.07);
+            --border-light: rgba(255,255,255,0.12);
+            --gold: #c9a84c;
+            --gold-light: #e4c97a;
+            --gold-dim: rgba(201,168,76,0.15);
+            --jade: #3dba88;
+            --jade-dim: rgba(61,186,136,0.12);
+            --text: #e8e6e0;
+            --muted: #7a7870;
+            --muted-light: #9e9b92;
+        }
+
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--black);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 300;
+            overflow-x: hidden;
+        }
+
+        /* GRAIN OVERLAY */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.028;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ─── HEADER ─────────────────────────────── */
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 6%;
+            height: 68px;
+            background: rgba(6,6,9,0.82);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex; align-items: baseline; gap: 0;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            color: var(--text);
+        }
+
+        .logo-icon {
+            font-size: 1.1rem;
+            margin-right: 8px;
+            opacity: 0.9;
+        }
+
+        .logo em {
+            font-style: italic;
+            color: var(--gold);
+            font-weight: 300;
+        }
+
+        nav {
+            display: flex; gap: 40px; align-items: center;
+        }
+
+        nav a {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav a:hover { color: var(--text); }
+
+        .btn-nav {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--gold);
+            border: 1px solid rgba(201,168,76,0.4);
+            padding: 7px 18px;
+            border-radius: 2px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-nav:hover {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        /* ─── HERO ───────────────────────────────── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 8% 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient glow blobs */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px; height: 700px;
+            background: radial-gradient(ellipse, rgba(61,186,136,0.06) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 10%; right: 5%;
+            width: 400px; height: 400px;
+            background: radial-gradient(ellipse, rgba(201,168,76,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-kicker {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--jade);
+            margin-bottom: 32px;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.2s forwards;
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3.2rem, 7vw, 6.5rem);
+            font-weight: 300;
+            line-height: 1.08;
+            letter-spacing: -0.01em;
+            margin-bottom: 32px;
+            opacity: 0;
+            animation: fadeUp 0.9s 0.35s forwards;
+        }
+
+        .hero-title .line-em {
+            display: block;
+            font-style: italic;
+            color: var(--gold);
+            font-weight: 300;
+        }
+
+        .hero-sub {
+            font-size: 1rem;
+            color: var(--muted-light);
+            max-width: 520px;
+            line-height: 1.75;
+            margin-bottom: 52px;
+            font-weight: 300;
+            opacity: 0;
+            animation: fadeUp 0.9s 0.5s forwards;
+        }
+
+        .hero-cta {
+            display: flex; gap: 16px;
+            opacity: 0;
+            animation: fadeUp 0.9s 0.65s forwards;
+        }
+
+        .btn-primary {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            background: var(--gold);
+            color: var(--black);
+            padding: 13px 28px;
+            border-radius: 2px;
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover { background: var(--gold-light); }
+
+        .btn-secondary {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            border: 1px solid var(--border-light);
+            color: var(--muted-light);
+            padding: 13px 28px;
+            border-radius: 2px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: rgba(255,255,255,0.25);
+            color: var(--text);
+        }
+
+        /* Stats bar */
+        .hero-stats {
+            display: flex; gap: 0;
+            margin-top: 80px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeUp 1s 0.9s forwards;
+        }
+
+        .stat-item {
+            padding: 22px 36px;
+            border-right: 1px solid var(--border);
+            text-align: center;
+            background: rgba(255,255,255,0.02);
+            transition: background 0.3s;
+        }
+
+        .stat-item:last-child { border-right: none; }
+        .stat-item:hover { background: rgba(255,255,255,0.04); }
+
+        .stat-val {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.9rem;
+            font-weight: 300;
+            color: var(--text);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-val.green { color: var(--jade); }
+        .stat-val.gold { color: var(--gold); }
+
+        .stat-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.58rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* ─── DIVIDER LINE ────────────────────────── */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+            margin: 0 8%;
+        }
+
+        /* ─── PHILOSOPHY ─────────────────────────── */
+        .section {
+            padding: 110px 8%;
+        }
+
+        .label-tag {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--jade);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .label-tag::before {
+            content: '';
+            display: block;
+            width: 24px; height: 1px;
+            background: var(--jade);
+        }
+
+        .philosophy-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: start;
+        }
+
+        .philosophy-left h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+            font-weight: 300;
+            line-height: 1.15;
+            letter-spacing: -0.01em;
+        }
+
+        .philosophy-left h2 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .philosophy-right {
+            padding-top: 10px;
+        }
+
+        .philosophy-right p {
+            color: var(--muted-light);
+            line-height: 1.85;
+            font-size: 1rem;
+            font-weight: 300;
+            margin-bottom: 24px;
+        }
+
+        .philosophy-right strong {
+            color: var(--text);
+            font-weight: 400;
+        }
+
+        /* Two pillars */
+        .pillars {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+            margin-top: 32px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .pillar {
+            background: var(--surface);
+            padding: 28px 26px;
+        }
+
+        .pillar-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: var(--gold);
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        .pillar p {
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        /* ─── STRATEGY ───────────────────────────── */
+        .strategy-section {
+            padding: 110px 8%;
+            background: var(--deep);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .strategy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 64px;
+        }
+
+        .strategy-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 300;
+        }
+
+        .strategy-header h2 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .strategy-header p {
+            font-size: 0.9rem;
+            color: var(--muted);
+            max-width: 280px;
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .card {
+            background: var(--surface);
+            padding: 44px 36px;
+            position: relative;
+            transition: background 0.4s;
+        }
+
+        .card:hover { background: var(--panel); }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--jade), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .card:hover::before { opacity: 1; }
+
+        .card-num {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            color: var(--muted);
+            margin-bottom: 32px;
+        }
+
+        .card-icon-wrap {
+            width: 44px; height: 44px;
+            border-radius: 3px;
+            background: var(--jade-dim);
+            border: 1px solid rgba(61,186,136,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 24px;
+        }
+
+        .card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            margin-bottom: 14px;
+            color: var(--text);
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* ─── ASSETS ────────────────────────────── */
+        .assets-row {
+            display: flex;
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 64px;
+        }
+
+        .asset-chip {
+            flex: 1;
+            padding: 18px 24px;
+            border-right: 1px solid var(--border);
+            text-align: center;
+            display: flex; flex-direction: column;
+            align-items: center; gap: 8px;
+            transition: background 0.3s;
+        }
+
+        .asset-chip:last-child { border-right: none; }
+        .asset-chip:hover { background: rgba(255,255,255,0.03); }
+
+        .asset-chip .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--jade);
+        }
+
+        .asset-chip .name {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted-light);
+        }
+
+        /* ─── RISK SECTION ───────────────────────── */
+        .risk-section {
+            padding: 110px 8%;
+        }
+
+        .risk-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 80px;
+            align-items: start;
+        }
+
+        .risk-left h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 300;
+            line-height: 1.15;
+        }
+
+        .risk-left h2 em {
+            font-style: italic;
+            color: var(--jade);
+        }
+
+        .risk-left p {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .risk-bars {
+            display: flex; flex-direction: column; gap: 28px;
+        }
+
+        .risk-bar-item {}
+
+        .risk-bar-header {
+            display: flex; justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .risk-bar-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted-light);
+        }
+
+        .risk-bar-val {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .bar-track {
+            height: 3px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--jade), rgba(61,186,136,0.5));
+            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .bar-fill.gold-bar {
+            background: linear-gradient(90deg, var(--gold), rgba(201,168,76,0.4));
+        }
+
+        /* ─── FOOTER ─────────────────────────────── */
+        footer {
+            background: var(--deep);
+            border-top: 1px solid var(--border);
+            padding: 70px 8% 40px;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 60px;
+            padding-bottom: 50px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+
+        .footer-brand .logo {
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+            display: inline-flex;
+        }
+
+        .footer-brand p {
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 300px;
+        }
+
+        .footer-col h5 {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
+        .footer-col a, .footer-col p {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--muted-light);
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-col a:hover { color: var(--text); }
+
+        .footer-disclaimer {
+            font-size: 0.75rem;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .footer-disclaimer strong {
+            color: var(--muted-light);
+            font-weight: 400;
+        }
+
+        /* ─── ANIMATIONS ─────────────────────────── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ─── RESPONSIVE ─────────────────────────── */
+        @media (max-width: 900px) {
+            nav, .btn-nav { display: none; }
+            .philosophy-layout, .risk-grid { grid-template-columns: 1fr; gap: 40px; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .hero-stats { flex-direction: column; border: none; gap: 1px; }
+            .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+            .strategy-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .strategy-header p { text-align: left; max-width: 100%; }
+            .footer-top { grid-template-columns: 1fr; gap: 40px; }
+            .assets-row { flex-wrap: wrap; }
+            .asset-chip { flex: 0 0 50%; border-bottom: 1px solid var(--border); }
+            .pillars { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <span class="logo-icon">🐢</span>
+            Padma&nbsp;<em>Turtle</em>
+        </div>
+        <nav>
+            <a href="#filosofi">Filosofi</a>
+            <a href="#strategi">Strategi</a>
+            <a href="#risiko">Manajemen Risiko</a>
+        </nav>
+        <a href="#kontak" class="btn-nav">Hubungi Kami</a>
+    </header>
+
+    <!-- ─── HERO ─── -->
+    <section class="hero">
+        <div class="hero-kicker">Kuantitatif Hedge Fund · Jakarta, Indonesia</div>
+        <h1 class="hero-title">
+            Preservasi Kapital,
+            <span class="line-em">Pertumbuhan Mantap.</span>
+        </h1>
+        <p class="hero-sub">
+            Strategi kuantitatif sistematis untuk menavigasi volatilitas pasar global — dibangun di atas disiplin matematis dan manajemen risiko yang tidak pernah berkompromi.
+        </p>
+        <div class="hero-cta">
+            <a href="#kontak" class="btn-primary">Mitra Institusi</a>
+            <a href="#strategi" class="btn-secondary">Jelajahi Strategi</a>
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-val green">Sistematis</div>
+                <div class="stat-label">Eksekusi 100% Algoritmik</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val gold">Multi-Aset</div>
+                <div class="stat-label">Crypto · Forex · Indeks · Komoditas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val">24/7</div>
+                <div class="stat-label">Pengawasan Risiko Otomatis</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val green">Ketat</div>
+                <div class="stat-label">Max Drawdown Terkontrol</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── PHILOSOPHY ─── -->
+    <section class="section" id="filosofi">
+        <div class="philosophy-layout reveal">
+            <div class="philosophy-left">
+                <div class="label-tag">Filosofi Kami</div>
+                <h2>
+                    Ketahanan <em>Padma,</em><br>
+                    Disiplin sang <em>Turtle.</em>
+                </h2>
+
+                <div class="pillars" style="margin-top: 40px;">
+                    <div class="pillar">
+                        <div class="pillar-name">Padma</div>
+                        <p>Teratai yang tumbuh bersih di atas permukaan berlumpur — tetap murni dan tenang di tengah ekosistem pasar yang bergejolak.</p>
+                    </div>
+                    <div class="pillar">
+                        <div class="pillar-name">Turtle</div>
+                        <p>Ketegasan taktik trend-following klasik yang disciplined, sabar, dan mengutamakan proteksi modal jangka panjang di atas segalanya.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="philosophy-right">
+                <p>Padma Turtle didirikan atas keyakinan bahwa pasar keuangan dapat didekati secara ilmiah. Bukan dengan intuisi atau sentimen, melainkan dengan struktur, data, dan probabilitas.</p>
+
+                <p>Kami percaya bahwa <strong>kemenangan jangka panjang</strong> bukan tentang mengejar imbal hasil tertinggi di setiap siklus, melainkan tentang bertahan dan tumbuh secara konsisten — bahkan ketika pasar dilanda ketidakpastian.</p>
+
+                <p>Setiap keputusan investasi kami dapat dilacak kembali ke sebuah persamaan, bukan pada feeling seorang trader. Inilah fondasi dari pendekatan <strong>kuantitatif sistematis</strong> yang kami jalankan.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── STRATEGY ─── -->
+    <section class="strategy-section" id="strategi">
+        <div class="strategy-header reveal">
+            <div>
+                <div class="label-tag">Pilar Strategi</div>
+                <h2>Bagaimana kami <em>bekerja.</em></h2>
+            </div>
+            <p>Tiga fondasi yang membentuk kerangka keputusan investasi Padma Turtle.</p>
+        </div>
+
+        <div class="cards-grid reveal">
+            <div class="card">
+                <div class="card-num">01</div>
+                <div class="card-icon-wrap">📊</div>
+                <h3>Sistematis & Kuantitatif</h3>
+                <p>Eksekusi perdagangan berbasis data historis berpresisi tinggi dan pemodelan matematis untuk mengeliminasi bias emosional manusia dari setiap keputusan.</p>
+            </div>
+            <div class="card">
+                <div class="card-num">02</div>
+                <div class="card-icon-wrap">🛡️</div>
+                <h3>Manajemen Risiko Ketat</h3>
+                <p>Pembatasan risiko maksimal per posisi yang dikontrol secara otomatis oleh algoritma pengawas 24/7 — tidak ada kompromi, tidak ada pengecualian.</p>
+            </div>
+            <div class="card">
+                <div class="card-num">03</div>
+                <div class="card-icon-wrap">🌐</div>
+                <h3>Diversifikasi Multi-Aset</h3>
+                <p>Alokasi aktif pada instrumen likuid global untuk mengoptimalkan Sharpe Ratio portofolio dan meminimalkan korelasi antar eksposur.</p>
+            </div>
+        </div>
+
+        <div class="assets-row reveal">
+            <div class="asset-chip">
+                <div class="dot"></div>
+                <div class="name">Crypto</div>
+            </div>
+            <div class="asset-chip">
+                <div class="dot" style="background: var(--gold)"></div>
+                <div class="name">Forex</div>
+            </div>
+            <div class="asset-chip">
+                <div class="dot"></div>
+                <div class="name">Saham Indeks</div>
+            </div>
+            <div class="asset-chip">
+                <div class="dot" style="background: var(--gold)"></div>
+                <div class="name">Komoditas</div>
+            </div>
+            <div class="asset-chip">
+                <div class="dot"></div>
+                <div class="name">Derivatif</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── RISK ─── -->
+    <section class="risk-section" id="risiko">
+        <div class="risk-grid reveal">
+            <div class="risk-left">
+                <div class="label-tag">Manajemen Risiko</div>
+                <h2>Kontrol yang tidak pernah <em>tidur.</em></h2>
+                <p>Sistem manajemen risiko kami beroperasi secara otonom sepanjang waktu, mengawasi setiap posisi dan memastikan parameter risiko selalu dalam batas yang telah ditetapkan.</p>
+            </div>
+
+            <div class="risk-bars">
+                <div class="risk-bar-item">
+                    <div class="risk-bar-header">
+                        <span class="risk-bar-label">Kontrol Drawdown</span>
+                        <span class="risk-bar-val">Otomatis</span>
+                    </div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 88%"></div>
+                    </div>
+                </div>
+                <div class="risk-bar-item">
+                    <div class="risk-bar-header">
+                        <span class="risk-bar-label">Diversifikasi Portofolio</span>
+                        <span class="risk-bar-val">Multi-Aset</span>
+                    </div>
+                    <div class="bar-track">
+                        <div class="bar-fill gold-bar" style="width: 76%"></div>
+                    </div>
+                </div>
+                <div class="risk-bar-item">
+                    <div class="risk-bar-header">
+                        <span class="risk-bar-label">Eksekusi Algoritmik</span>
+                        <span class="risk-bar-val">100%</span>
+                    </div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="risk-bar-item">
+                    <div class="risk-bar-header">
+                        <span class="risk-bar-label">Pemantauan Posisi</span>
+                        <span class="risk-bar-val">24/7</span>
+                    </div>
+                    <div class="bar-track">
+                        <div class="bar-fill gold-bar" style="width: 94%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── FOOTER ─── -->
+    <footer id="kontak">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <div class="logo">🐢 Padma <em>Turtle</em></div>
+                <p>Padma Turtle Capital Management mengelola aset institusi dan investor terakreditasi melalui pendekatan kuantitatif yang disiplin dan transparan.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Navigasi</h5>
+                <a href="#filosofi">Filosofi</a>
+                <a href="#strategi">Strategi</a>
+                <a href="#risiko">Manajemen Risiko</a>
+            </div>
+            <div class="footer-col">
+                <h5>Kontak</h5>
+                <p>investor@padmaturtle.com</p>
+                <p>Jakarta, Indonesia</p>
+                <p style="margin-top: 8px; color: var(--muted);">© 2026 Padma Turtle Capital Management. All Rights Reserved.</p>
+            </div>
+        </div>
+
+        <div class="footer-disclaimer">
+            <strong>Sanggahan Risiko:</strong> Investasi pada hedge fund melibatkan risiko yang signifikan, termasuk kemungkinan kehilangan seluruh modal yang diinvestasikan. Performa masa lalu tidak menjamin atau mencerminkan hasil di masa depan. Situs web ini ditujukan hanya untuk memberikan informasi umum bagi Investor Terakreditasi dan Institusi yang memenuhi syarat, serta bukan merupakan penawaran untuk menjual atau ajakan untuk membeli efek atau layanan penasihat investasi dari Padma Turtle.
+        </div>
+    </footer>
+
+    <script>
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Stagger children if cards-grid
+                    const cards = entry.target.querySelectorAll('.card, .pillar');
+                    cards.forEach((card, i) => {
+                        card.style.transitionDelay = `${i * 0.1}s`;
+                    });
+                }
+            });
+        }, { threshold: 0.12 });
+
+        reveals.forEach(el => observer.observe(el));
+
+        // Animate bars when visible
+        const barObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.bar-fill').forEach(bar => {
+                        const w = bar.style.width;
+                        bar.style.width = '0';
+                        setTimeout(() => { bar.style.width = w; }, 100);
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.risk-bars').forEach(el => barObserver.observe(el));
+    </script>
+
+</body>
+</html>
